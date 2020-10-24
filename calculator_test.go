@@ -75,22 +75,24 @@ func TestMultiply(t *testing.T) {
 func TestDivide(t *testing.T) {
 	t.Parallel()
 
-	testCases := []testCase{
-		{a: 3, b: 2, want: 1.5, desc: "Divide two positives"},
-		{a: -7, b: +2, want: -3.5, desc: "Divide a negative and a positive"},
-		{a: -5, b: -2, want: 2.5, desc: "Divide two negatives"},
-		{a: 4.5, b: -1.5, want: -3, desc: "Divide fractions"},
+	testCases := []testCaseWithErr{
+		{a: 3, b: 2, want: 1.5, desc: "Divide two positives", errExpected: false},
+		{a: -7, b: +2, want: -3.5, desc: "Divide a negative and a positive", errExpected: false},
+		{a: -5, b: -2, want: 2.5, desc: "Divide two negatives", errExpected: false},
+		{a: 4.5, b: -1.5, want: -3, desc: "Divide fractions", errExpected: false},
+		{a: 3, b: 0, want: 999, desc: "Divide by zero", errExpected: true},
 	}
 
 	for _, tc := range testCases {
 		got, err := calculator.Divide(tc.a, tc.b)
-		if err != nil {
-			if tc.want != got {
-				t.Errorf("Divide(%.2f, %.2f): want %.2f, got %.2f (%s)", tc.a, tc.b, tc.want, got, tc.desc)
-			}
-		} else {
-			t.Errorf("error: %v", err)
+		errReturned := err != nil
+
+		if errReturned != tc.errExpected {
+			t.Fatalf("Divide(%f, %f): unexpected error status: %v (%s)", tc.a, tc.b, err, tc.desc)
+		}
+
+		if !tc.errExpected && tc.want != got {
+			t.Errorf("Divide(%f, %f): want %f, got %f (%s)", tc.a, tc.b, tc.want, got, tc.desc)
 		}
 	}
-
 }

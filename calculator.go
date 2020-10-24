@@ -19,10 +19,8 @@ func Multiply(a, b float64) float64 {
 }
 
 func Divide(a, b float64) (float64, error) {
-	if b != 0 {
-		return a / b, nil
-	} else {
+	if b == 0 {
 		return 0, fmt.Errorf("bad input: %f, %f (division by zero is undefined", a, b)
 	}
-
+	return a / b, nil
 }
